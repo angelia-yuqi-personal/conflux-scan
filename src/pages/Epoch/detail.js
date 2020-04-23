@@ -155,15 +155,14 @@ class Detail extends Component {
       totalCount: 0,
       isLoading: false,
     };
+    this.getEpochId = this.getEpochId.bind(this);
   }
 
   componentDidMount() {
-    const {
-      match: { params },
-    } = this.props;
+    const epochid = this.getEpochId();
     const { curPage } = this.state;
     this.fetchInitList({
-      epochid: params.epochid,
+      epochid,
       curPage,
     });
   }
@@ -171,15 +170,22 @@ class Detail extends Component {
   componentDidUpdate(prevProps) {
     const { curPage } = this.state;
     // eslint-disable-next-line react/destructuring-assignment
-    if (this.props.match.params.epochid !== prevProps.match.params.epochid) {
-      const {
-        match: { params },
-      } = this.props;
+    const epochid = this.getEpochId();
+    const prevEpochId = prevProps.match.params.epochid;
+    if (epochid !== prevEpochId) {
       this.fetchInitList({
-        epochid: params.epochid,
+        epochid,
         curPage,
       });
     }
+  }
+
+  getEpochId() {
+    const {
+      match: { params },
+    } = this.props;
+    const { epochid } = params;
+    return epochid;
   }
 
   async fetchInitList({ epochid, curPage }) {
@@ -210,15 +216,13 @@ class Detail extends Component {
 
   render() {
     const { BlockList, curPage, totalCount, isLoading } = this.state;
-    const {
-      match: { params },
-    } = this.props;
+    const epochid = this.getEpochId();
     return (
       <div className="page-epoch-detail">
         <Wrapper>
           <HeadBar>
             <h1>{i18n('Epoch')}</h1>
-            <p>{params.epochid}</p>
+            <p>{epochid}</p>
           </HeadBar>
           {isLoading && <TableLoading />}
           <StyledTabel>
@@ -244,7 +248,7 @@ class Detail extends Component {
                   e.preventDefault();
                   this.fetchInitList({
                     curPage: data.activePage,
-                    epochid: params.epochid,
+                    epochid,
                   });
                 }}
                 activePage={curPage}
@@ -267,7 +271,7 @@ class Detail extends Component {
                   e.preventDefault();
                   this.fetchInitList({
                     curPage: data.activePage,
-                    epochid: params.epochid,
+                    epochid,
                   });
                 }}
                 ellipsisItem={null}

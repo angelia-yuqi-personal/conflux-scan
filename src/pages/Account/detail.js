@@ -70,7 +70,6 @@ class Detail extends Component {
       contractInfo: {},
       tokenList: [],
       tokenTotal: 0,
-      accountid: this.getAccountId(),
     };
     this.getAccountId = this.getAccountId.bind(this);
   }
@@ -91,9 +90,6 @@ class Detail extends Component {
       // eslint-disable-next-line  react/no-did-update-set-state
       this.autoSwitchTab();
       // eslint-disable-next-line  react/no-did-update-set-state
-      this.setState({
-        accountid,
-      });
       this.fetchTokenList(accountid);
       if (isContract(accountid)) {
         this.fetchContractInfo(accountid);
@@ -180,7 +176,7 @@ class Detail extends Component {
     const { currentTab, showMaintaining, blockCount, contractInfo, tokenTotal, tokenList, tokenMap } = this.state;
     const { intl } = this.props;
 
-    const { accountid } = this.state;
+    const accountid = this.getAccountId();
     const isContractAddr = isContract(accountid);
 
     return (
@@ -284,7 +280,6 @@ Detail.propTypes = {
   history: PropTypes.shape({
     push: PropTypes.func,
   }).isRequired,
-  accountid: PropTypes.string.isRequired,
   location: PropTypes.objectOf({
     hash: PropTypes.string,
   }).isRequired,
