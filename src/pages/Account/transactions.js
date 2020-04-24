@@ -58,8 +58,8 @@ class Transactions extends Component {
   componentDidUpdate(prevProps) {
     const { location } = this.props;
     if (this.props.accountid !== prevProps.accountid) {
+      this.setState({ startTime: null, endTime: null });
       if (location.hash === '') {
-        this.setState({ startTime: null, endTime: null });
         this.onMount();
         this.onceActive = true;
       } else {
