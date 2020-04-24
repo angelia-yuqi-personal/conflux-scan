@@ -88,8 +88,7 @@ class Detail extends Component {
     const prevAccountId = tranferToLowerCase(prevProps.match.params.accountid);
     if (accountid !== prevAccountId) {
       // eslint-disable-next-line  react/no-did-update-set-state
-      this.setState({ currentTab: tabEnum.transactions });
-      removeHash();
+      this.autoSwitchTab();
       // eslint-disable-next-line  react/no-did-update-set-state
       this.fetchTokenList(accountid);
       if (isContract(accountid)) {
@@ -114,7 +113,7 @@ class Detail extends Component {
       this.setState({ currentTab: tabEnum.minedBlocks });
     } else if (location.hash === `#${tabEnum.contract}`) {
       this.setState({ currentTab: tabEnum.contract });
-    } else {
+    } else if (location.hash === '') {
       this.setState({ currentTab: tabEnum.transactions });
     }
   }

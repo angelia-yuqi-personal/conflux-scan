@@ -1,16 +1,17 @@
 import React, { Component, Fragment } from 'react';
 import moment from 'moment';
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import styled from 'styled-components';
-import { Dropdown, Popup } from 'semantic-ui-react';
+import { Dropdown } from 'semantic-ui-react';
 import { DatePicker } from 'antd';
 import { injectIntl } from 'react-intl';
 import PropTypes from 'prop-types';
+import compose from 'lodash/fp/compose';
 import DataList from '../../components/DataList';
 import EllipsisLine from '../../components/EllipsisLine';
 import Countdown from '../../components/Countdown';
-import iconFcLogo from '../../assets/images/icons/fc-logo.svg';
-import { convertToValueorFee, converToGasPrice, i18n, renderAny, valToTokenVal } from '../../utils';
+// import iconFcLogo from '../../assets/images/icons/fc-logo.svg';
+import { i18n, renderAny, valToTokenVal } from '../../utils';
 import { StyledTabel, TabPanel, PCell, TabWrapper, IconFace, CtrlPanel } from './styles';
 import Pagination from '../../components/Pagination';
 import { reqTokenTxnList } from '../../utils/api';
@@ -78,14 +79,18 @@ class TokenTxns extends Component {
   }
 
   componentDidUpdate(prevProps) {
+    const { location } = this.props;
     if (this.props.accountid !== prevProps.accountid) {
-      this.onceActive = false;
-    }
-    if (this.props.isActive !== prevProps.isActive && this.props.isActive) {
-      if (!this.onceActive) {
+      if (location.hash === `#tokentxns`) {
         this.onMount();
         this.onceActive = true;
+      } else {
+        this.onceActive = false;
       }
+    }
+    if (this.props.isActive && !prevProps.isActive && !this.onceActive) {
+      this.onMount();
+      this.onceActive = true;
     }
   }
 
@@ -428,8 +433,15 @@ TokenTxns.propTypes = {
       tokenIcon: PropTypes.string,
     })
   ).isRequired,
+  location: PropTypes.objectOf({
+    hash: PropTypes.string,
+  }).isRequired,
 };
+const hoc = compose(
+  injectIntl,
+  withRouter
+);
 
 TokenTxns.defaultProps = {};
 
-export default injectIntl(TokenTxns);
+export default hoc(TokenTxns);
