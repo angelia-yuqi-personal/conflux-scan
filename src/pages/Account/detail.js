@@ -89,6 +89,7 @@ class Detail extends Component {
     if (accountid !== prevAccountId) {
       // eslint-disable-next-line  react/no-did-update-set-state
       this.setState({ currentTab: tabEnum.transactions });
+      removeHash();
       // eslint-disable-next-line  react/no-did-update-set-state
       this.fetchTokenList(accountid);
       if (isContract(accountid)) {
