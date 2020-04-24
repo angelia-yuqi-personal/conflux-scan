@@ -1,6 +1,4 @@
 import React, { Component, Fragment } from 'react';
-import { withRouter } from 'react-router-dom';
-import compose from 'lodash/fp/compose';
 import moment from 'moment';
 import styled from 'styled-components';
 import BigNumber from 'bignumber.js';
@@ -56,10 +54,10 @@ class Transactions extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { location } = this.props;
+    const { currentHash } = this.props;
     if (this.props.accountid !== prevProps.accountid) {
       this.setState({ startTime: null, endTime: null });
-      if (location.hash === '') {
+      if (currentHash === '') {
         this.onMount();
         this.onceActive = true;
       } else {
@@ -413,16 +411,9 @@ Transactions.propTypes = {
   intl: PropTypes.shape({
     formatMessage: PropTypes.func,
   }).isRequired,
-  location: PropTypes.objectOf({
-    hash: PropTypes.string,
-  }).isRequired,
+  currentHash: PropTypes.string.isRequired,
 };
 
 Transactions.defaultProps = {};
 
-const hoc = compose(
-  injectIntl,
-  withRouter
-);
-
-export default hoc(Transactions);
+export default injectIntl(Transactions);

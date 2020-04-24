@@ -1,12 +1,11 @@
 import React, { Component, Fragment } from 'react';
 import moment from 'moment';
-import { Link, withRouter } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { Dropdown } from 'semantic-ui-react';
 import { DatePicker } from 'antd';
 import { injectIntl } from 'react-intl';
 import PropTypes from 'prop-types';
-import compose from 'lodash/fp/compose';
 import DataList from '../../components/DataList';
 import EllipsisLine from '../../components/EllipsisLine';
 import Countdown from '../../components/Countdown';
@@ -79,10 +78,10 @@ class TokenTxns extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { location } = this.props;
+    const { currentHash } = this.props;
     if (this.props.accountid !== prevProps.accountid) {
       this.setState({ startTime: null, endTime: null });
-      if (location.hash === `#tokentxns`) {
+      if (currentHash === '#tokentxns') {
         this.onMount();
         this.onceActive = true;
       } else {
@@ -434,15 +433,9 @@ TokenTxns.propTypes = {
       tokenIcon: PropTypes.string,
     })
   ).isRequired,
-  location: PropTypes.objectOf({
-    hash: PropTypes.string,
-  }).isRequired,
+  currentHash: PropTypes.string.isRequired,
 };
-const hoc = compose(
-  injectIntl,
-  withRouter
-);
 
 TokenTxns.defaultProps = {};
 
-export default hoc(TokenTxns);
+export default injectIntl(TokenTxns);

@@ -174,7 +174,7 @@ class Detail extends Component {
 
   render() {
     const { currentTab, showMaintaining, blockCount, contractInfo, tokenTotal, tokenList, tokenMap } = this.state;
-    const { intl } = this.props;
+    const { intl, location } = this.props;
 
     const accountid = this.getAccountId();
     const isContractAddr = isContract(accountid);
@@ -259,12 +259,17 @@ class Detail extends Component {
               </button>
             </div>
             <div className="ctrlpanel-wrap">
-              <Transactions isActive={currentTab === tabEnum.transactions} accountid={accountid} />
+              <Transactions isActive={currentTab === tabEnum.transactions} currentHash={location.hash} accountid={accountid} />
               {currentTab === tabEnum.minedBlocks && blockCount > 0 ? <MinedBlocks blockCount={blockCount} accountid={accountid} /> : null}
               {isContractAddr && (
                 <ContractPanel isActive={currentTab === tabEnum.contract} accountid={accountid} contractInfo={contractInfo} />
               )}
-              <TokenTxns isActive={currentTab === tabEnum.tokentxns} accountid={accountid} tokenMap={tokenMap} />
+              <TokenTxns
+                isActive={currentTab === tabEnum.tokentxns}
+                currentHash={location.hash}
+                accountid={accountid}
+                tokenMap={tokenMap}
+              />
             </div>
           </TabZone>
         </Wrapper>
