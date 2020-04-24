@@ -1,4 +1,6 @@
 import React, { Component, Fragment } from 'react';
+import { withRouter } from 'react-router-dom';
+import compose from 'lodash/fp/compose';
 import moment from 'moment';
 import styled from 'styled-components';
 import BigNumber from 'bignumber.js';
@@ -15,7 +17,6 @@ import Pagination from '../../components/Pagination';
 import iconStatusErr from '../../assets/images/icons/status-err.svg';
 import iconStatusSkip from '../../assets/images/icons/status-skip.svg';
 import { reqAccountTransactionList } from '../../utils/api';
-import media from '../../globalStyles/media';
 import { TotalDesc, getTotalPage } from '../../components/TotalDesc';
 
 const ContractCell = styled.div`
@@ -30,7 +31,7 @@ const { RangePicker } = DatePicker;
 class Transactions extends Component {
   constructor(...args) {
     super(...args);
-    this.getInitState = () => ({
+    this.state = {
       TxList: [],
       TxTotalCount: 0,
       queries: {
@@ -38,34 +39,36 @@ class Transactions extends Component {
         pageSize: 10,
         txType: 'all',
       },
-      activated: false,
       listLimit: undefined,
       startTime: null,
       endTime: null,
-    });
-    this.state = this.getInitState();
+    };
+    this.onceActive = false;
+  }
+
+  componentDidMount() {
+    const { isActive } = this.props;
+    if (isActive) {
+      // first mount
+      this.onMount();
+      this.onceActive = true;
+    }
   }
 
   componentDidUpdate(prevProps) {
-    const { isActive } = this.props;
-    const { activated } = this.state;
-    if (isActive && !activated) {
-      // first mount
-      this.onMount();
-      this.setState({
-        activated: true,
-      });
-      return;
-    }
-
+    const { location } = this.props;
     if (this.props.accountid !== prevProps.accountid) {
-      this.setState(this.getInitState());
-      if (this.props.isActive) {
+      if (location.hash === '') {
+        this.setState({ startTime: null, endTime: null });
         this.onMount();
-        this.setState({
-          activated: true,
-        });
+        this.onceActive = true;
+      } else {
+        this.onceActive = false;
       }
+    }
+    if (this.props.isActive && !prevProps.isActive && !this.onceActive) {
+      this.onMount();
+      this.onceActive = true;
     }
   }
 
@@ -410,8 +413,16 @@ Transactions.propTypes = {
   intl: PropTypes.shape({
     formatMessage: PropTypes.func,
   }).isRequired,
+  location: PropTypes.objectOf({
+    hash: PropTypes.string,
+  }).isRequired,
 };
 
 Transactions.defaultProps = {};
 
-export default injectIntl(Transactions);
+const hoc = compose(
+  injectIntl,
+  withRouter
+);
+
+export default hoc(Transactions);
