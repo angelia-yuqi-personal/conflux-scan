@@ -82,6 +82,7 @@ class TokenTxns extends Component {
     const { location } = this.props;
     if (this.props.accountid !== prevProps.accountid) {
       if (location.hash === `#tokentxns`) {
+        this.setState({ startTime: null, endTime: null });
         this.onMount();
         this.onceActive = true;
       } else {
