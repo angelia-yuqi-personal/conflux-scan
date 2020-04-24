@@ -88,7 +88,7 @@ class Detail extends Component {
     const prevAccountId = tranferToLowerCase(prevProps.match.params.accountid);
     if (accountid !== prevAccountId) {
       // eslint-disable-next-line  react/no-did-update-set-state
-      this.autoSwitchTab();
+      this.setState({ currentTab: tabEnum.transactions });
       // eslint-disable-next-line  react/no-did-update-set-state
       this.fetchTokenList(accountid);
       if (isContract(accountid)) {

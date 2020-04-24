@@ -1,9 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import moment from 'moment';
-import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import BigNumber from 'bignumber.js';
 import { Dropdown, Popup } from 'semantic-ui-react';
 import { DatePicker } from 'antd';
 import { injectIntl } from 'react-intl';
@@ -15,9 +13,9 @@ import iconFcLogo from '../../assets/images/icons/fc-logo.svg';
 import { convertToValueorFee, converToGasPrice, i18n, renderAny, valToTokenVal } from '../../utils';
 import { StyledTabel, TabPanel, PCell, TabWrapper, IconFace, CtrlPanel } from './styles';
 import Pagination from '../../components/Pagination';
-import { reqTokenTxnList, reqFcStat } from '../../utils/api';
+import { reqTokenTxnList } from '../../utils/api';
 import { TotalDesc, getTotalPage } from '../../components/TotalDesc';
-import { UPDATE_COMMON, defaultTokenIcon } from '../../constants';
+import { defaultTokenIcon, fansCoinAddress } from '../../constants';
 
 const NumCell = styled.div`
   color: rgba(0, 0, 0, 0.87);
@@ -55,8 +53,7 @@ const { RangePicker } = DatePicker;
 class TokenTxns extends Component {
   constructor(...args) {
     super(...args);
-
-    this.getInitState = () => ({
+    this.state = {
       TxList: [],
       TxTotalCount: 0,
       queries: {
@@ -64,57 +61,41 @@ class TokenTxns extends Component {
         pageSize: 10,
         txType: 'all',
       },
-      activated: false,
       listLimit: undefined,
       startTime: null,
       endTime: null,
-    });
-    this.state = this.getInitState();
+    };
+    this.onceActive = false;
+  }
+
+  componentDidMount() {
+    const { isActive } = this.props;
+    if (isActive) {
+      // first mount
+      this.onMount();
+      this.onceActive = true;
+    }
   }
 
   componentDidUpdate(prevProps) {
-    const { isActive } = this.props;
-    const { activated } = this.state;
-    if (isActive && !activated) {
-      // first mount
-      this.onMount();
-      this.setState({
-        activated: true,
-      });
-      return;
-    }
-
     if (this.props.accountid !== prevProps.accountid) {
-      this.setState(this.getInitState());
-      if (this.props.isActive) {
+      this.onceActive = false;
+    }
+    if (this.props.isActive !== prevProps.isActive && this.props.isActive) {
+      if (!this.onceActive) {
         this.onMount();
-        this.setState({
-          activated: true,
-        });
+        this.onceActive = true;
       }
     }
   }
 
   onMount() {
-    const { accountid, fcStat, dispatch } = this.props;
+    const { accountid } = this.props;
     this.changePage(accountid, {
       page: 1,
       pageSize: 10,
       txType: 'all',
     });
-
-    if (!fcStat.address) {
-      reqFcStat().then((body) => {
-        if (body.code === 0) {
-          dispatch({
-            type: UPDATE_COMMON,
-            payload: {
-              fcStat: body.result.data,
-            },
-          });
-        }
-      });
-    }
   }
 
   changePage(accountid, queriesRaw) {
@@ -142,11 +123,11 @@ class TokenTxns extends Component {
   }
 
   render() {
-    const { accountid, isActive, intl, tokenMap = {}, fcStat } = this.props;
-    const { TxList, TxTotalCount, queries, listLimit, activated } = this.state;
+    const { accountid, isActive, intl, tokenMap = {} } = this.props;
+    const { TxList, TxTotalCount, queries, listLimit } = this.state;
     const { startTime, endTime } = this.state;
 
-    if (!activated) {
+    if (!isActive) {
       return null;
     }
 
@@ -221,9 +202,9 @@ class TokenTxns extends Component {
 
           let tokenLink;
           const txt = `${name} (${symbol})`;
-          if (fcStat.address === row.address) {
+          if (fansCoinAddress === row.address) {
             tokenLink = <Link to="/fansCoin">{txt}</Link>;
-            tokenImg = <img src={iconFcLogo} />;
+            // tokenImg = <img src={iconFcLogo} />;
           } else {
             tokenLink = <a>{txt}</a>;
           }
@@ -447,18 +428,8 @@ TokenTxns.propTypes = {
       tokenIcon: PropTypes.string,
     })
   ).isRequired,
-  fcStat: PropTypes.objectOf({
-    address: PropTypes.string,
-  }).isRequired,
-  dispatch: PropTypes.string.isRequired,
 };
 
 TokenTxns.defaultProps = {};
 
-function mapStateToProps(state) {
-  return {
-    fcStat: state.common.fcStat,
-  };
-}
-
-export default connect(mapStateToProps)(injectIntl(TokenTxns));
+export default injectIntl(TokenTxns);
