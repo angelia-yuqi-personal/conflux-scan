@@ -188,7 +188,13 @@ class TokenTxns extends Component {
         dataIndex: 'value',
         title: i18n('Value'),
         render: (text, row) => {
-          return <NumCell>{valToTokenVal(text, row.token.decimals)}</NumCell>;
+          if (row.token) {
+            if (row.token.decimals) {
+              return <NumCell>{valToTokenVal(text, row.token.decimals)}</NumCell>;
+            }
+            return <NumCell>{text}</NumCell>;
+          }
+          return null;
         },
       },
       {
@@ -197,6 +203,9 @@ class TokenTxns extends Component {
         dataIndex: '',
         title: i18n('Token'),
         render: (text, row) => {
+          if (!row.token) {
+            return null;
+          }
           const { name, symbol } = row.token;
           let tokenImg;
           if (tokenMap[row.address] && tokenMap[row.address].tokenIcon) {
