@@ -4,6 +4,7 @@ import { Popup } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
+import { intlShape, injectIntl } from 'react-intl';
 import { i18n, isContract } from '../../utils';
 import EllipsisLine from '../EllipsisLine';
 import { defaultContractIcon, defaultTokenIcon } from '../../constants';
@@ -32,7 +33,8 @@ const ContractCellNormal = styled.div`
 
 class AddressEllipseLine extends PureComponent {
   render() {
-    const { contractManagerCache, contractCreated, address, type, textInout, noLink } = this.props;
+    const { contractManagerCache, contractCreated, address, type, textInout, noLink, intl } = this.props;
+    // console.log(intl.locale);
     if (type === 'to' && !address) {
       // no to address
       return <ContractName>{i18n('Contract Creation')}</ContractName>;
@@ -92,6 +94,7 @@ function mapStateToProps(state) {
 }
 
 AddressEllipseLine.propTypes = {
+  intl: intlShape.isRequired,
   contractManagerCache: PropTypes.objectOf(
     PropTypes.shape({
       name: PropTypes.string,

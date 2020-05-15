@@ -152,7 +152,11 @@ class Transactions extends Component {
         render: (text, row) => (
           <div>
             <PCell>
-              {text !== accountid ? <AddressEllipseLine address={text} textInout="In" /> : <AddressEllipseLine noLink address={text} />}
+              {text !== accountid ? (
+                <AddressEllipseLine address={text} textInout="In" intl={intl} />
+              ) : (
+                <AddressEllipseLine noLink address={text} intl={intl} />
+              )}
             </PCell>
           </div>
         ),
@@ -167,9 +171,9 @@ class Transactions extends Component {
             <div>
               <PCell>
                 {text !== accountid ? (
-                  <AddressEllipseLine contractCreated={row.contractCreated} textInout="Out" address={text} type="to" />
+                  <AddressEllipseLine contractCreated={row.contractCreated} textInout="Out" address={text} type="to" intl={intl} />
                 ) : (
-                  <AddressEllipseLine contractCreated={row.contractCreated} address={text} noLink type="to" />
+                  <AddressEllipseLine contractCreated={row.contractCreated} address={text} noLink type="to" intl={intl} />
                 )}
               </PCell>
             </div>

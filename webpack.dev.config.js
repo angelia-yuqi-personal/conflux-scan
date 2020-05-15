@@ -21,12 +21,12 @@ module.exports = merge(commom, {
     proxy: {
       // '/proxy': 'http://127.0.0.1:3000',
       '/api': {
-        target: 'http://101.201.103.131:8885',
+        target: 'http://47.95.128.92:88855',
         // target: 'http://13.75.69.106',
         // pathRewrite: { '^/api': '' },
       },
       '/future': {
-        target: 'http://101.201.103.131:8885',
+        target: 'http://47.95.128.92:8885',
       },
       '/contract-manager': {
         target: 'http://101.201.103.131:8886',
