@@ -113,4 +113,4 @@ AddressEllipseLine.defaultProps = {
   noLink: false,
 };
 
-export default connect(mapStateToProps)(AddressEllipseLine);
+export default injectIntl(connect(mapStateToProps)(AddressEllipseLine));
